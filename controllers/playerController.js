@@ -1,9 +1,13 @@
+const Player = require('../models/player');
+
+
 exports.getPlayers = async (req, res) => {
     const max = req.query.max;
 
     try {
         if(max == null || max == undefined || max == '') {
-            const players = await Player.find();
+            //order players by name
+            const players = await Player.find().sort({name: 1});
             res.json(players);
         } else {
             const players = await Player.find().limit(parseInt(max));
@@ -36,12 +40,20 @@ exports.getPlayer = async (req, res) => {
 
     try {
         const player = await Player.findOne({ steamid64: steamid64 });
-        res.json(player);
-    }
-    catch (err) {
+        
+        const data = {
+            name: player.name,
+            steamid64: player.steamid64,
+            hub: player.hub,
+            twitter: player.twitter,
+            lastCrosshair: player.crosshairList[player.crosshairList.length - 1].crosshair,
+            lastCrosshairDate: player.crosshairList[player.crosshairList.length - 1].date,
+        };
+
+        res.json(data);
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
-
 };
 
 exports.addCrosshairToPlayer = async (req, res) => {

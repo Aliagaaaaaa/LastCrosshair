@@ -11,3 +11,5 @@ router.post('/', playerController.addPlayer);
 router.get('/:steamid64', playerController.getPlayer);
 
 router.post('/:steamid64/crosshair', playerController.addCrosshairToPlayer);
+
+module.exports = router;
