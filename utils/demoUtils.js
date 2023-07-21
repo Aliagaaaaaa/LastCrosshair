@@ -51,20 +51,11 @@ async function checkHub(hub){
                 }
             }
 
-            try {
-                downloadDemo(matches[i].demo_url[0]);
-            } catch(err) {
-                console.log("Error trying to download demo: " + matches[i].demo_url[0]);
-                continue;
-            }
-        
-
             const name = matches[i].match_id;
             const url = matches[i].demo_url[0];
             const date = Date.now();
             const hub = matches[i].competition_name;
 
-            //for some reason, sometimes the veto is not available, so we need to check if it is
             var map = "";
             if(matches[i].voting != null && matches[i].voting.map != null && matches[i].voting.map.pick != null && matches[i].voting.map.pick[0] != null){
                 map = matches[i].voting.map.pick[0];
@@ -80,61 +71,53 @@ async function checkHub(hub){
                 hub: hub,
             });
 
+
             try {
-                const newDemo = await demo.save();
+                downloadDemo(matches[i].demo_url[0], demo);
             } catch(err) {
-                console.log(err);
-            }   
-        }
-    }
-}
-
-async function downloadDemo(demoUrl, retryCount = 3) {
-    try {
-        const fileName = path.basename(demoUrl);
-        const savePath = path.join(saveFolderPath, fileName);
-
-        const response = await axios.get(demoUrl, { responseType: "stream" });
-        const fileStream = fs.createWriteStream(savePath);
-        response.data.pipe(fileStream);
-
-        await new Promise((resolve, reject) => {
-            fileStream.on("finish", resolve);
-            fileStream.on("error", reject);
-        });
-
-        console.log("File downloaded successfully.");
-
-        const readStream = fs.createReadStream(savePath);
-        const writeStream = fs.createWriteStream(savePath.replace('.gz', ''));
-
-        const gunzip = zlib.createGunzip();
-        readStream.pipe(gunzip).pipe(writeStream);
-
-        await new Promise((resolve, reject) => {
-            writeStream.on('finish', resolve);
-            writeStream.on('error', reject);
-        });
-
-        console.log('File decompressed successfully.');
-        fs.unlink(savePath, (err) => {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log('File compressed deleted successfully.');
-                getCrosshairs(savePath.replace('.gz', ''));
+                console.log("Error trying to download demo: " + matches[i].demo_url[0]);
+                continue;
             }
-        });
-    } catch (error) {
-        if (retryCount > 0 && error.message.toLowerCase().includes("cloudflare")) {
-            console.log(`Error de Cloudflare. Reintentando... (Intentos restantes: ${retryCount})`);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            await downloadDemo(demoUrl, retryCount - 1);
-        } else {
-            console.error("Error durante la descarga:", error);
+        
         }
     }
 }
+
+async function downloadDemo(demoUrl, demo) {
+    const fileName = path.basename(demoUrl);
+    const savePath = path.join(saveFolderPath, fileName);
+
+    axios.get(demoUrl, { responseType: "stream" })
+        .then((response) => {
+            const fileStream = fs.createWriteStream(savePath);
+            response.data.pipe(fileStream);
+
+            fileStream.on("finish", () => {
+                console.log("File downloaded successfully.");
+                demo.save();
+
+                const readStream = fs.createReadStream(savePath);
+                const writeStream = fs.createWriteStream(savePath.replace('.gz', ''));
+
+                const gunzip = zlib.createGunzip();
+                readStream.pipe(gunzip).pipe(writeStream);
+
+                writeStream.on('finish', () => {
+                    console.log('File decompressed successfully.');
+                    fs.unlink(savePath, (err) => {
+                        if (err) {
+                            console.error(err)
+                        } else {
+                            console.log('File compressed deleted successfully.');
+                            getCrosshairs(savePath.replace('.gz', ''));
+                        }
+                    });
+                });
+
+            });
+        });
+}
+
 async function getCrosshairs(path){
     const stream = fs.createReadStream(path);
     const demoFile = new demofile.DemoFile();
