@@ -87,7 +87,8 @@ async function downloadDemo(demoUrl, demo) {
     const fileName = path.basename(demoUrl);
     const savePath = path.join(saveFolderPath, fileName);
 
-    axios.get(demoUrl, { responseType: "stream" })
+    try {
+        axios.get(demoUrl, { responseType: "stream" })
         .then((response) => {
             const fileStream = fs.createWriteStream(savePath);
             response.data.pipe(fileStream);
@@ -116,6 +117,11 @@ async function downloadDemo(demoUrl, demo) {
 
             });
         });
+    }
+    catch (err) {
+        console.log(err);
+    }
+
 }
 
 async function getCrosshairs(path){
