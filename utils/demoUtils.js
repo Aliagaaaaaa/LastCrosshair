@@ -98,6 +98,7 @@ async function downloadDemo(demoUrl, demo) {
         });
 
         console.log("File downloaded successfully.");
+        demo.save();
 
         const readStream = fs.createReadStream(savePath);
         const writeStream = fs.createWriteStream(savePath.replace('.gz', ''));
