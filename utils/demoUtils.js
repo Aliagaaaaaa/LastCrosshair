@@ -20,7 +20,7 @@ async function checkAllHubs(){
 async function checkHub(hub){
     console.log("Checking for new demos on hub: " + hub);
 
-    const response = await axios.get("https://open.faceit.com/data/v4/hubs/" + hub + "/matches?type=past&offset=0&limit=5", {
+    const response = await axios.get("https://open.faceit.com/data/v4/hubs/" + hub + "/matches?type=past&offset=0&limit=3", {
         headers: {
             accept: "application/json",
             Authorization: `Bearer ${process.env.FACEIT_API_KEY}`,
