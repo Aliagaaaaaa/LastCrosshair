@@ -90,32 +90,37 @@ async function downloadDemo(demoUrl, demo) {
     try {
         axios.get(demoUrl, { responseType: "stream" })
         .then((response) => {
-            const fileStream = fs.createWriteStream(savePath);
-            response.data.pipe(fileStream);
-
-            fileStream.on("finish", () => {
-                console.log("File downloaded successfully.");
-                demo.save();
-
-                const readStream = fs.createReadStream(savePath);
-                const writeStream = fs.createWriteStream(savePath.replace('.gz', ''));
-
-                const gunzip = zlib.createGunzip();
-                readStream.pipe(gunzip).pipe(writeStream);
-
-                writeStream.on('finish', () => {
-                    console.log('File decompressed successfully.');
-                    fs.unlink(savePath, (err) => {
-                        if (err) {
-                            console.error(err)
-                        } else {
-                            console.log('File compressed deleted successfully.');
-                            getCrosshairs(savePath.replace('.gz', ''));
-                        }
+            try {
+                const fileStream = fs.createWriteStream(savePath);
+                response.data.pipe(fileStream);
+    
+                fileStream.on("finish", () => {
+                    console.log("File downloaded successfully.");
+                    demo.save();
+    
+                    const readStream = fs.createReadStream(savePath);
+                    const writeStream = fs.createWriteStream(savePath.replace('.gz', ''));
+    
+                    const gunzip = zlib.createGunzip();
+                    readStream.pipe(gunzip).pipe(writeStream);
+    
+                    writeStream.on('finish', () => {
+                        console.log('File decompressed successfully.');
+                        fs.unlink(savePath, (err) => {
+                            if (err) {
+                                console.error(err)
+                            } else {
+                                console.log('File compressed deleted successfully.');
+                                getCrosshairs(savePath.replace('.gz', ''));
+                            }
+                        });
                     });
+    
                 });
-
-            });
+            }
+            catch (err) {
+                console.log(err);
+            }
         });
     }
     catch (err) {
