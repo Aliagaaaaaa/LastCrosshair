@@ -121,7 +121,7 @@ async function downloadDemo(demoUrl, demo) {
             }
         });
     } catch (error) {
-        if (retryCount > 0 && error.message.toLowerCase().includes("cloudflare")) {
+        if (error.message.toLowerCase().includes("cloudflare")) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             await downloadDemo(demoUrl, demo);
         } else {
