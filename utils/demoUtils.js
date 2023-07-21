@@ -156,27 +156,20 @@ async function getCrosshairs(path){
                     continue;
                 }
 
-                var found = false;
-                for(var j = 0; j < player.crosshairList.length; j++){
-                    if(player.crosshairList[j].crosshair == crosshairs[i].crosshair){
-                        found = true;
-                        break;
-                    }
+                if(player.crosshairList.length > 0 && player.crosshairList[player.crosshairList.length - 1].crosshair == crosshairs[i].crosshair){
+                    continue;
                 }
 
-                if(!found){
-                    player.crosshairList.push({crosshair: crosshairs[i].crosshair, date: new Date()});
-                    try {
-                        const newxd = await player.save();
-                        console.log("New crosshair saved: " + player.name + " " + player.steamid64 + " " + crosshairs[i].crosshair);
-                    }
-                    catch (err) {
-                        console.log(err);
-                    }
+                player.crosshairList.push({crosshair: crosshairs[i].crosshair, date: new Date()});
+                try {
+                    const newxd = await player.save();
+                    console.log("New crosshair saved: " + player.name + " " + player.steamid64 + " " + crosshairs[i].crosshair);
+                } catch (err) {
+                    console.log(err);
                 }
+            
             }
 
-            //delete demo file
             fs.unlink(path, (err) => {
                 if (err) {
                     console.error(err)
