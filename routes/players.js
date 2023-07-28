@@ -8,8 +8,8 @@ const playerController = require('../controllers/playerController');
 
 router.get('/', playerController.getPlayers);
 router.post('/', playerController.addPlayer);
-router.get('/:steamid64', playerController.getPlayer);
+router.get('/:name', playerController.getPlayer);
 
-router.post('/:steamid64/crosshair', playerController.addCrosshairToPlayer);
+router.post('/:name/crosshair', playerController.addCrosshairToPlayer);
 
 module.exports = router;
