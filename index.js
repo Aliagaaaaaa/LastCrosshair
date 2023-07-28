@@ -22,8 +22,8 @@ app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-demoUtils.checkAllHubs();
-setInterval(demoUtils.checkAllHubs, 1000 * 60 * 5);
+//demoUtils.checkAllHubs();
+//setInterval(demoUtils.checkAllHubs, 1000 * 60 * 5);
 
 
 

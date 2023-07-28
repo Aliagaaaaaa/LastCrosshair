@@ -6,7 +6,6 @@ exports.getPlayers = async (req, res) => {
 
     try {
         if(max == null || max == undefined || max == '') {
-            //order players by name
             const players = await Player.find().sort({name: 1});
             res.json(players);
         } else {
@@ -36,21 +35,17 @@ exports.addPlayer = async (req, res) => {
 };
 
 exports.getPlayer = async (req, res) => {
-    const steamid64 = req.params.steamid64;
+    const name = req.params.name;
 
     try {
-        const player = await Player.findOne({ steamid64: steamid64 });
-        
-        const data = {
-            name: player.name,
-            steamid64: player.steamid64,
-            hub: player.hub,
-            twitter: player.twitter,
-            lastCrosshair: player.crosshairList[player.crosshairList.length - 1].crosshair,
-            lastCrosshairDate: player.crosshairList[player.crosshairList.length - 1].date,
-        };
+        const player = await Player.findOne({ name: name });
+    
+        if(!player) {
+            res.status(404).json({ message: 'Cannot find player' });
+            return;
+        }
 
-        res.json(data);
+        res.json(player);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
