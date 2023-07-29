@@ -7,9 +7,9 @@ const Player = require('../models/player');
 const playerController = require('../controllers/playerController');
 
 router.get('/', playerController.getPlayers);
-router.post('/', playerController.addPlayer);
+//router.post('/', playerController.addPlayer);
 router.get('/:name', playerController.getPlayer);
 
-router.post('/:name/crosshair', playerController.addCrosshairToPlayer);
+//router.post('/:name/crosshair', playerController.addCrosshairToPlayer);
 
 module.exports = router;
