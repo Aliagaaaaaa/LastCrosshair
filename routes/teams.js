@@ -6,11 +6,11 @@ const Player = require('../models/player');
 
 const teamsController = require('../controllers/teamsController');
 
-router.get('/', teamsController.getTeams);
-router.post('/', teamsController.addTeam);
+//router.get('/', teamsController.getTeams);
+//router.post('/', teamsController.addTeam);
 router.get('/:name', teamsController.getTeam);
 
-router.post('/:name/player', teamsController.addPlayerToTeam);
-router.delete('/:name/player', teamsController.removePlayerFromTeam);
+//router.post('/:name/player', teamsController.addPlayerToTeam);
+//router.delete('/:name/player', teamsController.removePlayerFromTeam);
 
 module.exports = router;
