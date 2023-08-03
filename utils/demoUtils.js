@@ -48,6 +48,16 @@ async function checkHub(hub){
                     catch (err) {
                         console.log(err);
                     }
+                } else {
+                    if(player.hub != matches[i].competition_name){
+                        player.hub = matches[i].competition_name;
+                        try {
+                            const newxd = await player.save();
+                        }
+                        catch (err) {
+                            console.log(err);
+                        }
+                    }
                 }
             }
 
